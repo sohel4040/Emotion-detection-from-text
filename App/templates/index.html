@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Emotion Detection from Text</title>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+    <style>
+      body {
+        background-image: url("../static/back.jpg");
+        background-size: cover;
+        background-repeat: no-repeat;
+      }
+
+      .head {
+        font-size: 3rem;
+        text-align: center;
+        padding: 1.5rem;
+      }
+      .container {
+        display: flex;
+        margin: auto;
+        height: 40%;
+        width: 70%;
+        padding: 1rem;
+      }
+      .main {
+        width: 60%;
+        margin: auto;
+        self-align: center;
+      }
+      .main form {
+        margin: 2rem 0rem;
+      }
+      .result {
+        margin: 1rem;
+        width: 40%;
+      }
+      #chart {
+        margin: 1rem;
+        width: 60%;
+      }
+      .btn {
+        font-size: 1.5rem;
+        padding: 0.5rem 1rem;
+      }
+      h2 {
+        margin: 0rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main">
+      <h1 class="head">Emotion Detection from Text</h1>
+      <form action="/predict" method="post">
+        <label for="raw_text"
+          ><h2><b>Type Here:</b></h2></label
+        ><br />
+        <textarea id="raw_text" name="raw_text" rows="4" cols="50"></textarea
+        ><br />
+        <div class="btn">
+          <input type="submit" value="Submit" />
+        </div>
+      </form>
+    </div>
+    {% if prediction %}
+    <div class="container">
+      <div class="result">
+        <h2>Result</h2>
+        <h3>Original Text</h3>
+        <p>{{ raw_text }}</p>
+        <h3>Prediction</h3>
+        <p>{{ prediction }}: {{ emoji_icon }}</p>
+        <p>Confidence: {{ probability }}</p>
+        <h3>Prediction Probability</h3>
+      </div>
+      <div id="chart"></div>
+    </div>
+
+    <script>
+      const prediction_probabilities = {{ prediction_probabilities|safe }};
+      const emotionslist = [
+        "anger",
+        "disgust",
+        "fear",
+        "joy",
+        "neutral",
+        "sadness",
+        "shame",
+        "surprise",
+      ];
+
+      const combinedData = {};
+      for (let i = 0; i < emotionslist.length; i++) {
+        combinedData[emotionslist[i]] = prediction_probabilities[0][i];
+      }
+      const data = emotionslist.map((emotion, index) => ({
+        emotion: emotion,
+        probability: prediction_probabilities[0][index],
+      }));
+
+      const spec = {
+        $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+        width: 400,
+        height: 200,
+        data: {
+          values: data,
+        },
+        mark: "bar",
+        encoding: {
+          x: { field: "emotion", type: "ordinal" },
+          y: { field: "probability", type: "quantitative" },
+          color: { field: "emotion", type: "nominal" },
+        },
+      };
+
+      vegaEmbed("#chart", spec);
+    </script>
+    {% endif %}
+  </body>
+</html>
