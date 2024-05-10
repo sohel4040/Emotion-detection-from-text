@@ -80,43 +80,43 @@
     </div>
 
     <script>
-      const prediction_probabilities = {{ prediction_probabilities|safe }};
-      const emotionslist = [
-        "anger",
-        "disgust",
-        "fear",
-        "joy",
-        "neutral",
-        "sadness",
-        "shame",
-        "surprise",
-      ];
+        const prediction_probabilities = {{ prediction_probabilities|safe }};
 
-      const combinedData = {};
-      for (let i = 0; i < emotionslist.length; i++) {
-        combinedData[emotionslist[i]] = prediction_probabilities[0][i];
-      }
-      const data = emotionslist.map((emotion, index) => ({
-        emotion: emotion,
-        probability: prediction_probabilities[0][index],
-      }));
+        const emotionslist  = [
+          "anger",
+          "fear",
+          "joy",
+          "love",
+          "sadness",
+          "surprise",
+      ]
 
-      const spec = {
-        $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-        width: 400,
-        height: 200,
-        data: {
-          values: data,
-        },
-        mark: "bar",
-        encoding: {
-          x: { field: "emotion", type: "ordinal" },
-          y: { field: "probability", type: "quantitative" },
-          color: { field: "emotion", type: "nominal" },
-        },
-      };
 
-      vegaEmbed("#chart", spec);
+        const combinedData = {};
+        for (let i = 0; i < emotionslist.length; i++) {
+          combinedData[emotionslist[i]] = prediction_probabilities[0][i];
+        }
+        const data = emotionslist.map((emotion, index) => ({
+          emotion: emotion,
+          probability: prediction_probabilities[0][index],
+        }));
+
+        const spec = {
+          $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+          width: 400,
+          height: 200,
+          data: {
+            values: data,
+          },
+          mark: "bar",
+          encoding: {
+            x: { field: "emotion", type: "ordinal" },
+            y: { field: "probability", type: "quantitative" },
+            color: { field: "emotion", type: "nominal" },
+          },
+        };
+
+        vegaEmbed("#chart", spec);
     </script>
     {% endif %}
   </body>

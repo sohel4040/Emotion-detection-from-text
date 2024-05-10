@@ -7,11 +7,19 @@ import json  # Import the json module
 app = Flask(__name__)
 
 # Load machine learning model
-pipe_lr = joblib.load(open("models/emotion_classifier_pipe.pkl", "rb"))
+pipe_lr = joblib.load(open("models/best_algorithm_test2.pkl", "rb"))
 
 # Dictionary mapping emotions to emojis
-emotions_emoji_dict = {"anger": "😠", "disgust": "🤮", "fear": "😨", "joy": "😂", "neutral": "😐",
-                        "sadness": "😔", "shame": "😳", "surprise": "😮"}
+
+emotions_emoji_dict = {
+    "anger": "😠",
+    "fear": "😨",
+    "joy": "😃",
+    "love": "❤️",
+    "sadness": "😔",
+    "surprise": "😮",
+}
+
 
 # Function to predict emotions
 def predict_emotions(docx):
@@ -44,6 +52,7 @@ def predict():
         
         probability = np.max(get_prediction_proba(raw_text))
         
+        print(prediction_probabilities)
 
         # Render prediction result template with data
         return render_template('index.html', raw_text=raw_text, prediction=prediction,
